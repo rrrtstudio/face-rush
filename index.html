@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Face Rush</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="./style.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./vendor/three/three.module.js",
+          "three/addons/": "./vendor/three/addons/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hud" aria-label="Game status">
+        <section class="hud-meter hud-meter-left" aria-label="Time">
+          <span>TIME</span>
+          <strong id="timeDisplay">00:00.00</strong>
+        </section>
+
+        <section class="target-panel" aria-label="Target color">
+          <span>TARGET COLOR</span>
+          <strong>
+            <i id="targetChip" class="target-chip" aria-hidden="true"></i>
+            <span id="targetColorLabel">WHITE</span>
+          </strong>
+          <label class="fixed-white-option" for="whiteFixedToggle">
+            <input id="whiteFixedToggle" type="checkbox" />
+            Lock White
+          </label>
+        </section>
+
+        <section class="hud-meter hud-meter-right" aria-label="Clear count">
+          <span>CLEARS</span>
+          <strong id="clearDisplay">0 / 3</strong>
+        </section>
+      </header>
+
+      <main class="game-stage" aria-label="Face Rush game area">
+        <section class="main-view view-card" aria-label="Main cube view">
+          <canvas id="gameCanvas" aria-label="Cube input area"></canvas>
+        </section>
+
+        <section class="sub-view-grid" aria-label="Static cube overview">
+          <article class="sub-view view-card">
+            <canvas id="subCanvas1" class="sub-canvas" aria-label="Static view from upper front left"></canvas>
+          </article>
+
+          <article class="sub-view view-card">
+            <canvas id="subCanvas2" class="sub-canvas" aria-label="Static view from upper back right"></canvas>
+          </article>
+
+          <article class="sub-view view-card">
+            <canvas id="subCanvas3" class="sub-canvas" aria-label="Static view from lower front right"></canvas>
+          </article>
+        </section>
+
+        <div id="clearBanner" class="clear-banner" hidden>0 / 3 CLEAR!</div>
+
+        <section id="resultOverlay" class="result-overlay" aria-live="polite" hidden>
+          <div class="result-stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <span class="result-label">RESULT</span>
+          <h1>COMPLETE!</h1>
+          <span class="result-label">TOTAL TIME</span>
+          <strong id="totalTime">00:00.00</strong>
+          <span class="result-label">BEST TIME</span>
+          <strong id="bestTime">--:--.--</strong>
+          <span class="result-label">RANK</span>
+          <span id="rankDisplay" class="rank-badge">D</span>
+          <span id="recordDisplay" class="result-note" hidden>NEW RECORD!</span>
+          <span id="masterMessage" class="result-note" hidden></span>
+        </section>
+      </main>
+
+      <footer class="action-bar" aria-label="Game actions">
+        <button id="startButton" class="primary-button" type="button">START</button>
+        <button id="resetButton" class="secondary-button" type="button">RESET</button>
+      </footer>
+    </div>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
