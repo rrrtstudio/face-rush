@@ -39,6 +39,8 @@ export class GameUI {
     this.timeDisplay = document.querySelector("#timeDisplay");
     this.clearDisplay = document.querySelector("#clearDisplay");
     this.clearBanner = document.querySelector("#clearBanner");
+    this.startOverlay = document.querySelector("#startOverlay");
+    this.overlayStartButton = document.querySelector("#overlayStartButton");
     this.resultOverlay = document.querySelector("#resultOverlay");
     this.totalTime = document.querySelector("#totalTime");
     this.bestTime = document.querySelector("#bestTime");
@@ -56,6 +58,7 @@ export class GameUI {
 
   bindActions({ onStart, onReset }) {
     this.startButton.addEventListener("click", onStart);
+    this.overlayStartButton.addEventListener("click", onStart);
     this.resetButton.addEventListener("click", onReset);
   }
 
@@ -64,6 +67,7 @@ export class GameUI {
     this.setClearCount(0);
     this.hideClear();
     this.hideResult();
+    this.showStartOverlay();
     this.startButton.disabled = false;
     this.startButton.textContent = "START";
   }
@@ -71,6 +75,7 @@ export class GameUI {
   setRunning() {
     this.hideResult();
     this.hideClear();
+    this.hideStartOverlay();
     this.startButton.disabled = true;
     this.startButton.textContent = "START";
   }
@@ -123,6 +128,7 @@ export class GameUI {
     this.recordDisplay.hidden = !isNewRecord;
     this.masterMessage.textContent = rank === "MASTER" ? randomMasterMessage() : "";
     this.masterMessage.hidden = rank !== "MASTER";
+    this.hideStartOverlay();
     this.resultOverlay.hidden = false;
     this.startButton.disabled = false;
     this.startButton.textContent = "TRY AGAIN";
@@ -132,5 +138,15 @@ export class GameUI {
     this.resultOverlay.hidden = true;
     this.recordDisplay.hidden = true;
     this.masterMessage.hidden = true;
+  }
+
+  showStartOverlay() {
+    this.startOverlay.hidden = false;
+    this.overlayStartButton.disabled = false;
+  }
+
+  hideStartOverlay() {
+    this.startOverlay.hidden = true;
+    this.overlayStartButton.disabled = true;
   }
 }

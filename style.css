@@ -336,6 +336,30 @@ button {
   letter-spacing: 0;
 }
 
+.start-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  padding: clamp(1rem, 4vw, 2rem);
+  background:
+    radial-gradient(circle at 50% 44%, rgba(24, 224, 181, 0.16), transparent 32%),
+    rgba(3, 5, 4, 0.46);
+  backdrop-filter: blur(3px);
+}
+
+.start-overlay-button {
+  width: min(78vw, 24rem);
+  min-height: clamp(4.2rem, 13vh, 6.5rem);
+  font-size: clamp(1.55rem, 8vw, 3.25rem);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  box-shadow:
+    0 22px 70px rgba(24, 224, 181, 0.34),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+}
+
 [hidden] {
   display: none !important;
 }
@@ -399,5 +423,16 @@ button {
   .secondary-button {
     min-width: 0;
     width: min(42vw, 9rem);
+  }
+
+  .start-overlay {
+    align-items: center;
+    padding: 1rem;
+  }
+
+  .start-overlay-button {
+    width: min(82vw, 20rem);
+    min-height: 5.4rem;
+    font-size: clamp(2rem, 12vw, 3rem);
   }
 }
