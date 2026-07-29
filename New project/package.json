@@ -1,0 +1,11 @@
+{
+  "name": "face-rush",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "dependencies": {
+    "three": "0.160.0"
+  }
+}
