@@ -6,8 +6,14 @@ import {
   WHITE_FIXED_MODE,
 } from "./config.js";
 
+const PREVIEW_SHEET_SNAP_DISTANCE = 34;
+
 export function getRank(totalSeconds) {
   return RANK_THRESHOLDS.find((entry) => totalSeconds <= entry.maxSeconds).rank;
+}
+
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
 }
 
 function readBestTime() {
@@ -52,16 +58,23 @@ export class GameUI {
     this.whiteFixedToggle = document.querySelector("#whiteFixedToggle");
     this.previewToggle = document.querySelector("#previewToggle");
     this.subViewGrid = document.querySelector("#subViewGrid");
+    this.previewSheetHandle = document.querySelector("#previewSheetHandle");
     this.gameStage = document.querySelector(".game-stage");
     this.startButton = document.querySelector("#startButton");
     this.resetButton = document.querySelector("#resetButton");
+    this.previewSheetExpanded = false;
+    this.previewSheetDrag = null;
+    this.ignorePreviewSheetClick = false;
+    this.onPreviewLayoutChange = () => {};
 
     this.whiteFixedToggle.checked = WHITE_FIXED_MODE.defaultEnabled;
     this.previewToggle.checked = false;
+    this.bindPreviewSheetHandle();
     this.setPreviewVisible(false);
   }
 
   bindActions({ onStart, onReset, onPreviewChange = () => {} }) {
+    this.onPreviewLayoutChange = onPreviewChange;
     this.startButton.addEventListener("click", onStart);
     this.overlayStartButton.addEventListener("click", onStart);
     this.resetButton.addEventListener("click", onReset);
@@ -119,6 +132,119 @@ export class GameUI {
   setPreviewVisible(visible) {
     this.subViewGrid.hidden = !visible;
     this.gameStage.classList.toggle("previews-hidden", !visible);
+    this.gameStage.classList.toggle("preview-sheet-enabled", visible);
+
+    this.subViewGrid.style.transform = "";
+    this.previewSheetDrag = null;
+    this.gameStage.classList.remove("preview-sheet-dragging");
+    this.setPreviewSheetExpanded(false, { notify: false });
+  }
+
+  bindPreviewSheetHandle() {
+    this.previewSheetHandle.addEventListener("click", (event) => {
+      event.preventDefault();
+
+      if (this.ignorePreviewSheetClick || !this.isPreviewVisible()) {
+        this.ignorePreviewSheetClick = false;
+        return;
+      }
+
+      this.setPreviewSheetExpanded(!this.previewSheetExpanded);
+    });
+
+    this.previewSheetHandle.addEventListener("pointerdown", (event) => {
+      if (event.pointerType === "mouse" && event.button !== 0) return;
+      if (!this.isPreviewVisible()) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      const metrics = this.getPreviewSheetMetrics();
+      this.previewSheetDrag = {
+        pointerId: event.pointerId,
+        startY: event.clientY,
+        startOffset: this.previewSheetExpanded ? 0 : metrics.maxOffset,
+        currentOffset: this.previewSheetExpanded ? 0 : metrics.maxOffset,
+        maxOffset: metrics.maxOffset,
+        moved: false,
+      };
+
+      this.gameStage.classList.add("preview-sheet-dragging");
+      this.previewSheetHandle.setPointerCapture(event.pointerId);
+    });
+
+    this.previewSheetHandle.addEventListener("pointermove", (event) => {
+      const drag = this.previewSheetDrag;
+      if (!drag || drag.pointerId !== event.pointerId) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      const deltaY = event.clientY - drag.startY;
+      drag.moved ||= Math.abs(deltaY) > 3;
+      drag.currentOffset = clamp(drag.startOffset + deltaY, 0, drag.maxOffset);
+      this.subViewGrid.style.transform = `translateY(${drag.currentOffset}px)`;
+    });
+
+    this.previewSheetHandle.addEventListener("pointerup", (event) => {
+      this.finishPreviewSheetDrag(event);
+    });
+
+    this.previewSheetHandle.addEventListener("pointercancel", (event) => {
+      this.finishPreviewSheetDrag(event);
+    });
+  }
+
+  getPreviewSheetMetrics() {
+    const panelHeight = this.subViewGrid.getBoundingClientRect().height;
+    const handleHeight = this.previewSheetHandle.getBoundingClientRect().height || 36;
+    return {
+      maxOffset: Math.max(0, panelHeight - handleHeight),
+    };
+  }
+
+  finishPreviewSheetDrag(event) {
+    const drag = this.previewSheetDrag;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (this.previewSheetHandle.hasPointerCapture(event.pointerId)) {
+      this.previewSheetHandle.releasePointerCapture(event.pointerId);
+    }
+
+    const deltaY = event.clientY - drag.startY;
+    const passedSnapDistance = Math.abs(deltaY) >= PREVIEW_SHEET_SNAP_DISTANCE;
+    const shouldExpand = passedSnapDistance
+      ? deltaY < 0
+      : drag.currentOffset < drag.maxOffset * 0.55;
+
+    this.subViewGrid.style.transform = "";
+    this.previewSheetDrag = null;
+    this.gameStage.classList.remove("preview-sheet-dragging");
+    this.setPreviewSheetExpanded(shouldExpand);
+
+    if (drag.moved) {
+      this.ignorePreviewSheetClick = true;
+      window.setTimeout(() => {
+        this.ignorePreviewSheetClick = false;
+      }, 180);
+    }
+  }
+
+  setPreviewSheetExpanded(expanded, { notify = true } = {}) {
+    this.previewSheetExpanded = Boolean(expanded);
+    this.gameStage.classList.toggle("preview-sheet-expanded", this.previewSheetExpanded);
+    this.previewSheetHandle.setAttribute("aria-expanded", String(this.previewSheetExpanded));
+    this.previewSheetHandle.setAttribute(
+      "aria-label",
+      this.previewSheetExpanded ? "Collapse cube preview" : "Expand cube preview"
+    );
+
+    if (notify && this.isPreviewVisible()) {
+      this.onPreviewLayoutChange(true);
+    }
   }
 
   showClear(count) {

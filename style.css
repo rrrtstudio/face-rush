@@ -219,6 +219,10 @@ button {
   pointer-events: none;
 }
 
+.preview-sheet-handle {
+  display: none;
+}
+
 .action-bar {
   position: relative;
   z-index: 2;
@@ -392,6 +396,23 @@ button {
 }
 
 @media (max-width: 620px) {
+  html,
+  body {
+    height: auto;
+    min-height: 100%;
+  }
+
+  body {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .app-shell {
+    grid-template-rows: auto auto auto;
+    height: auto;
+    min-height: 100svh;
+  }
+
   .hud {
     grid-template-columns: 1fr 1fr;
     align-items: stretch;
@@ -421,8 +442,34 @@ button {
   }
 
   .game-stage {
-    grid-template-rows: minmax(350px, 1fr) 148px;
+    grid-template-rows: minmax(390px, 58svh) 148px;
     gap: 0.55rem;
+  }
+
+  .game-stage.previews-hidden {
+    grid-template-rows: minmax(420px, 58svh);
+  }
+
+  .game-stage.preview-sheet-enabled {
+    grid-template-rows: minmax(390px, 58svh) 148px;
+  }
+
+  .game-stage.preview-sheet-enabled .sub-view-grid {
+    position: relative;
+    z-index: 4;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.45rem;
+    height: 148px;
+    min-height: 0;
+  }
+
+  .game-stage.preview-sheet-enabled .sub-view {
+    border-radius: 7px;
+  }
+
+  .preview-sheet-handle {
+    display: none;
   }
 
   .action-bar {
