@@ -50,16 +50,26 @@ export class GameUI {
     this.targetChip = document.querySelector("#targetChip");
     this.targetColorLabel = document.querySelector("#targetColorLabel");
     this.whiteFixedToggle = document.querySelector("#whiteFixedToggle");
+    this.previewToggle = document.querySelector("#previewToggle");
+    this.subViewGrid = document.querySelector("#subViewGrid");
+    this.gameStage = document.querySelector(".game-stage");
     this.startButton = document.querySelector("#startButton");
     this.resetButton = document.querySelector("#resetButton");
 
     this.whiteFixedToggle.checked = WHITE_FIXED_MODE.defaultEnabled;
+    this.previewToggle.checked = false;
+    this.setPreviewVisible(false);
   }
 
-  bindActions({ onStart, onReset }) {
+  bindActions({ onStart, onReset, onPreviewChange = () => {} }) {
     this.startButton.addEventListener("click", onStart);
     this.overlayStartButton.addEventListener("click", onStart);
     this.resetButton.addEventListener("click", onReset);
+    this.previewToggle.addEventListener("change", () => {
+      const visible = this.previewToggle.checked;
+      this.setPreviewVisible(visible);
+      onPreviewChange(visible);
+    });
   }
 
   setReady() {
@@ -100,6 +110,15 @@ export class GameUI {
 
   isWhiteFixed() {
     return this.whiteFixedToggle.checked;
+  }
+
+  isPreviewVisible() {
+    return this.previewToggle.checked;
+  }
+
+  setPreviewVisible(visible) {
+    this.subViewGrid.hidden = !visible;
+    this.gameStage.classList.toggle("previews-hidden", !visible);
   }
 
   showClear(count) {

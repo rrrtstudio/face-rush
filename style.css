@@ -125,7 +125,8 @@ button {
   box-shadow: 0 0 18px rgba(255, 255, 255, 0.32);
 }
 
-.fixed-white-option {
+.fixed-white-option,
+.preview-option {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -137,7 +138,12 @@ button {
   user-select: none;
 }
 
-.fixed-white-option input {
+.preview-option {
+  margin-top: 0.1rem;
+}
+
+.fixed-white-option input,
+.preview-option input {
   width: 0.9rem;
   height: 0.9rem;
   margin: 0;
@@ -151,6 +157,10 @@ button {
   gap: clamp(0.65rem, 1.8vw, 1rem);
   min-height: 0;
   padding: 0 clamp(0.75rem, 2.6vw, 1.25rem);
+}
+
+.game-stage.previews-hidden {
+  grid-template-rows: minmax(0, 1fr);
 }
 
 .view-card {

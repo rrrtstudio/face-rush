@@ -101,7 +101,11 @@ let subViewLighting = null;
 
 createLighting();
 createGround();
-ui.bindActions({ onStart: startGame, onReset: resetGame });
+ui.bindActions({
+  onStart: startGame,
+  onReset: resetGame,
+  onPreviewChange: handlePreviewChange,
+});
 resetGame();
 requestAnimationFrame(animate);
 
@@ -300,6 +304,13 @@ function renderSubViews() {
   scene.fog = previousFog;
 
   viewStats.subRenderBatches += 1;
+}
+
+function handlePreviewChange(visible) {
+  requestAnimationFrame(() => {
+    resize();
+    if (visible) scheduleSubViewRender();
+  });
 }
 
 function resize() {

@@ -33,6 +33,10 @@
             <input id="whiteFixedToggle" type="checkbox" />
             Lock White
           </label>
+          <label class="preview-option" for="previewToggle">
+            <input id="previewToggle" type="checkbox" />
+            Show Cube Preview
+          </label>
         </section>
 
         <section class="hud-meter hud-meter-right" aria-label="Clear count">
@@ -46,7 +50,7 @@
           <canvas id="gameCanvas" aria-label="Cube input area"></canvas>
         </section>
 
-        <section class="sub-view-grid" aria-label="Static cube overview">
+        <section id="subViewGrid" class="sub-view-grid" aria-label="Static cube overview" hidden>
           <article class="sub-view view-card">
             <canvas id="subCanvas1" class="sub-canvas" aria-label="Static view from upper front left"></canvas>
           </article>
