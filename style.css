@@ -126,8 +126,8 @@ button {
 }
 
 .fixed-white-option,
-.preview-option {
-  display: inline-flex;
+.preview-option,
+.vibration-option {
   align-items: center;
   justify-content: center;
   gap: 0.38rem;
@@ -138,12 +138,23 @@ button {
   user-select: none;
 }
 
+.fixed-white-option,
 .preview-option {
+  display: inline-flex;
+}
+
+.preview-option,
+.vibration-option {
   margin-top: 0.1rem;
 }
 
+.vibration-option {
+  display: none;
+}
+
 .fixed-white-option input,
-.preview-option input {
+.preview-option input,
+.vibration-option input {
   width: 0.9rem;
   height: 0.9rem;
   margin: 0;
@@ -472,6 +483,10 @@ button {
 
   .preview-sheet-handle {
     display: none;
+  }
+
+  .vibration-option {
+    display: inline-flex;
   }
 
   .action-bar {

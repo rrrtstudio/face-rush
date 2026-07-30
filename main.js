@@ -6,6 +6,7 @@ import { GameTimer } from "./timer.js";
 import { findCompletedTargetFace } from "./judge.js";
 import { Effects } from "./effects.js";
 import { GameUI } from "./ui.js";
+import { Haptics } from "./haptics.js";
 import { chooseTargetColor, WHITE_FIXED_MODE } from "./config.js";
 
 const ROUND_DELAY_MS = 1000;
@@ -72,6 +73,7 @@ scene.add(cube.group);
 const timer = new GameTimer();
 const ui = new GameUI({ totalRounds: TARGET_ROUNDS });
 const effects = new Effects(scene);
+const haptics = new Haptics({ enabled: ui.isVibrationEnabled() });
 
 const controls = new CubeControls({
   camera,
@@ -105,6 +107,7 @@ ui.bindActions({
   onStart: startGame,
   onReset: resetGame,
   onPreviewChange: handlePreviewChange,
+  onVibrationChange: (enabled) => haptics.setEnabled(enabled),
 });
 resetGame();
 requestAnimationFrame(animate);
@@ -245,7 +248,10 @@ function handleMoveComplete() {
   if (!game.running || game.transitioning) return;
 
   const completed = findCompletedTargetFace(cube, game.targetColor);
-  if (!completed) return;
+  if (!completed) {
+    haptics.pulse("move");
+    return;
+  }
 
   game.transitioning = true;
   game.clearCount += 1;
@@ -256,6 +262,7 @@ function handleMoveComplete() {
   effects.playClearSound();
 
   if (game.clearCount >= TARGET_ROUNDS) {
+    haptics.pulse("complete");
     const total = timer.stop();
     game.running = false;
     window.setTimeout(() => {
@@ -266,6 +273,7 @@ function handleMoveComplete() {
     return;
   }
 
+  haptics.pulse("clear");
   window.setTimeout(() => {
     ui.hideClear();
     prepareRound();

@@ -3,6 +3,7 @@ import {
   BEST_TIME_STORAGE_KEY,
   MASTER_MESSAGES,
   RANK_THRESHOLDS,
+  VIBRATION_SETTINGS,
   WHITE_FIXED_MODE,
 } from "./config.js";
 
@@ -57,6 +58,7 @@ export class GameUI {
     this.targetColorLabel = document.querySelector("#targetColorLabel");
     this.whiteFixedToggle = document.querySelector("#whiteFixedToggle");
     this.previewToggle = document.querySelector("#previewToggle");
+    this.vibrationToggle = document.querySelector("#vibrationToggle");
     this.subViewGrid = document.querySelector("#subViewGrid");
     this.previewSheetHandle = document.querySelector("#previewSheetHandle");
     this.gameStage = document.querySelector(".game-stage");
@@ -69,11 +71,12 @@ export class GameUI {
 
     this.whiteFixedToggle.checked = WHITE_FIXED_MODE.defaultEnabled;
     this.previewToggle.checked = false;
+    this.vibrationToggle.checked = VIBRATION_SETTINGS.defaultEnabled;
     this.bindPreviewSheetHandle();
     this.setPreviewVisible(false);
   }
 
-  bindActions({ onStart, onReset, onPreviewChange = () => {} }) {
+  bindActions({ onStart, onReset, onPreviewChange = () => {}, onVibrationChange = () => {} }) {
     this.onPreviewLayoutChange = onPreviewChange;
     this.startButton.addEventListener("click", onStart);
     this.overlayStartButton.addEventListener("click", onStart);
@@ -82,6 +85,9 @@ export class GameUI {
       const visible = this.previewToggle.checked;
       this.setPreviewVisible(visible);
       onPreviewChange(visible);
+    });
+    this.vibrationToggle.addEventListener("change", () => {
+      onVibrationChange(this.vibrationToggle.checked);
     });
   }
 
@@ -127,6 +133,10 @@ export class GameUI {
 
   isPreviewVisible() {
     return this.previewToggle.checked;
+  }
+
+  isVibrationEnabled() {
+    return this.vibrationToggle.checked;
   }
 
   setPreviewVisible(visible) {

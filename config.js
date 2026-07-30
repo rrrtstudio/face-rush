@@ -7,6 +7,17 @@ export const WHITE_FIXED_MODE = {
   colorName: "white",
 };
 
+export const VIBRATION_SETTINGS = {
+  defaultEnabled: true,
+  mobileOnly: true,
+  mobileMediaQuery: "(hover: none) and (pointer: coarse)",
+  durationsMs: {
+    move: 9,
+    clear: 50,
+    complete: 120,
+  },
+};
+
 export const RANK_THRESHOLDS = [
   { rank: "MASTER", maxSeconds: 5 * 60 },
   { rank: "S", maxSeconds: 10 * 60 },
